@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Código Diário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #codigoGerado {
+            margin-top: 30px;
+            padding: 15px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #e9f5ff;
+            word-break: break-all; /* Garante que o texto quebre se for muito longo */
+        }
+        .instructions {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Código Diário</h1>
+        <p class="instructions">
+            Clique no botão abaixo para gerar o código diário atual.
+            Copie o código gerado e cole-o na célula A1 da aba "Cod" da sua planilha Excel.
+        </p>
+        <button onclick="gerarECopiarCodigo()">Gerar e Copiar Código</button>
+        <div id="codigoGerado">
+            Seu código aparecerá aqui
+        </div>
+    </div>
+
+    <script>
+        // Função para gerar um número aleatório entre min e max (inclusive)
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function gerarCodigoDiario() {
+            const today = new Date();
+            const dia = today.getDate();
+            const mes = today.getMonth() + 1; // getMonth() retorna 0-11
+            const ano = today.getFullYear();
+
+            // Z - letra do alfabeto correspondente ao numero do dia
+            // (Ex.: dia 1 "A" dia 5 "E" dia 26 "Z" dia 27 começa o ciclo novamente 27 "A" , dia 28 "B"....etc)
+            const letraDia = String.fromCharCode(65 + ((dia - 1) % 26));
+
+            // 26 - sempre será equivalente ao dia em que a macro está sendo executada
+            const diaFormatado = dia.toString().padStart(2, '0');
+
+            // 3205 - conjunto de 04 digitos aleatorios e a função é somente estetica
+            const randomNum1 = getRandomInt(1000, 9999).toString();
+
+            // f - sempre será parte correspondente a letra do alfabeto correspondente ao numero do mês
+            // (Ex.: Mês 1 "A" Mês 5 "E")
+            const letraMes = String.fromCharCode(65 + (mes - 1));
+
+            // t - sempre será parte correspondente a letra do alfabeto correspondente ao numero do prefixo do ano vigente "20"25
+            // Considera o prefixo "20" como a 20ª letra do alfabeto ('T').
+            // Se o ano não começar com "20", ajuste a lógica (ex: para 19XX, poderia ser 'S')
+            let letraPrefixoAno;
+            const prefixoAnoStr = String(ano).substring(0, 2);
+            if (prefixoAnoStr === "20") {
+                letraPrefixoAno = "T"; // 'T' é a 20ª letra
+            } else {
+                // Implemente a lógica para outros prefixos se necessário
+                // Por simplicidade, para outros prefixos, pode-se usar uma letra genérica ou calcular
+                letraPrefixoAno = "X"; // Placeholder
+            }
+            
+            // 25 - sempre deverá ser correspondente ao ano corrente
+            const anoCurto = String(ano).slice(-2);
+
+            // 013 - será um código aleatório apenas para estetica, sem função nenhuma
+            const randomNum2 = getRandomInt(100, 999).toString();
+
+            // Monta o código completo
+            const codigoCompleto = letraDia + diaFormatado + randomNum1 + letraMes + letraPrefixoAno + anoCurto + randomNum2;
+            return codigoCompleto;
+        }
+
+        async function gerarECopiarCodigo() {
+            const codigo = gerarCodigoDiario();
+            document.getElementById('codigoGerado').innerText = codigo;
+
+            // Tenta copiar o código para a área de transferência
+            try {
+                await navigator.clipboard.writeText(codigo);
+                alert('Código gerado e copiado para a área de transferência! Cole na célula A1 da aba "Cod".');
+            } catch (err) {
+                console.error('Falha ao copiar o código:', err);
+                alert('Código gerado: ' + codigo + '\nPor favor, copie manualmente.');
+            }
+        }
+
+        // Gera o código na primeira vez que a página é carregada
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('codigoGerado').innerText = gerarCodigoDiario();
+        });
+    </script>
+</body>
+</html>
