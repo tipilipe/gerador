@@ -134,7 +134,7 @@
             // Tenta copiar o código para a área de transferência
             try {
                 await navigator.clipboard.writeText(codigo);
-                alert('Código gerado e copiado para a área de transferência! Cole na célula A1 da aba "Cod".');
+                //alert('Código gerado e copiado para a área de transferência! Cole na célula A1 da aba "Cod".');
             } catch (err) {
                 console.error('Falha ao copiar o código:', err);
                 alert('Código gerado: ' + codigo + '\nPor favor, copie manualmente.');
@@ -147,4 +147,5 @@
         });
     </script>
 </body>
+
 </html>
